@@ -11,6 +11,8 @@ Author: Valentin Todorov
 import pandas as pd
 import io
 import requests
+import os
+import glob
 
 
 # Stock parameters and source URL
@@ -28,39 +30,40 @@ stockPricesDataLoc = "/Users/valentin/Documents/AlgoTrades/Development/Data/Stoc
 
 ####################################################################
 
-# Get a list with stock symbols from the BATS exchange
-stockSymbolsUrl = batsExchangeUrl
-s = requests.get(stockSymbolsUrl).content
-stockSymbols = pd.read_csv(io.StringIO(s.decode('utf-8')))
-
-# Save the CSV file to a local repository - add a date to the filename
-stockSymbols.to_csv(stockExchangeSymbols)
-
-
 # Pull the stock prices for the symbols in the list
 stockSymbols = pd.read_csv(stockExchangeSymbols)
 symbols = stockSymbols["Symbols"][1:5].tolist()
 
 
+# Download and save the stock symbols data
+# If data is not available, print a warning message
 for i in range(len(symbols)):
     stockTicker = symbols[i]
     stockUrl = yahooUrl1 + stockTicker + yahooUrl2 + str(yearParameter)
 
     try:
-        # Download and save the data
         s2 = requests.get(stockUrl).content
         stockTickerDf = pd.read_csv(io.StringIO(s2.decode('utf-8')))
     except:
-        print("WARNING: Data is not available")
+        print("WARNING: Data for symbol " +  stockTicker + " is not available")
     else:
         print('\n')
         print("Downloading symbol ->> " + stockTicker + " (remaining: " + str(len(symbols) - i) + ")")
-        print(stockTickerDf.head(1))
+        # print(stockTickerDf.head(1))
         stockTickerDf.to_csv(stockPricesDataLoc + stockTicker + ".csv", index = False)
     
+print('\n')
+print("->> END of data download process <<-") 
     
-    
-    
+
+# Merge the data from all CSV files
+listFiles = glob.glob(os.path.join(stockPricesDataLoc, "*.csv"))
+
+tempDf = (pd.read_csv(f) for f in listFiles)
+stocksDf = pd.concat(tempDf, axis = 1)
+
+
+        
     
 for i in range(create a list with all filenames in the local repository):
     
