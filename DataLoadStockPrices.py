@@ -51,10 +51,16 @@ for i in range(len(symbols)):
         print("Downloading symbol ->> " + stockTicker + " (remaining: " + str(len(symbols) - i) + ")")
         # print(stockTickerDf.head(1))
         stockTickerDf.to_csv(stockPricesDataLoc + stockTicker + ".csv", index = False)
+        
+        # Rename the fields
+        # All fields except for date should be called [originalName_STOCKNAME]
+        Date Open High Low Close Volume "Adj Close"
+        
+        
     
 print('\n')
 print("->> END of data download process <<-") 
-    
+
 
 # Merge the data from all CSV files
 listFiles = glob.glob(os.path.join(stockPricesDataLoc, "*.csv"))
