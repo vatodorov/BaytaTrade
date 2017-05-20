@@ -13,6 +13,8 @@ import io
 import requests
 import os
 import glob
+import time
+import random
 
 
 # Stock parameters and source URL
@@ -32,7 +34,7 @@ stockPricesDataLoc = "/Users/valentin/Documents/AlgoTrades/Development/Data/Stoc
 
 # Pull the stock prices for the symbols in the list
 stockSymbols = pd.read_csv(stockExchangeSymbols)
-symbols = stockSymbols["Symbols"][1:5].tolist()
+symbols = stockSymbols["Symbols"].tolist()
 
 
 # Download and save the stock symbols data
@@ -45,6 +47,7 @@ for i in range(len(symbols)):
         s2 = requests.get(stockUrl).content
         stockTickerDf = pd.read_csv(io.StringIO(s2.decode('utf-8')))
     except:
+        print('\n')
         print("WARNING: Data for symbol " +  stockTicker + " is not available")
     else:
         print('\n')
@@ -52,33 +55,25 @@ for i in range(len(symbols)):
         # print(stockTickerDf.head(1))
         stockTickerDf.to_csv(stockPricesDataLoc + stockTicker + ".csv", index = False)
         
+        # Delay the process by a random number if Yahoo kicks me out
+        # time.sleep(random.uniform(0, 2))
+        
         # Rename the fields
         # All fields except for date should be called [originalName_STOCKNAME]
-        Date Open High Low Close Volume "Adj Close"
-        
-        
-    
+        # Date Open High Low Close Volume "Adj Close"
+
 print('\n')
 print("->> END of data download process <<-") 
 
 
-# Merge the data from all CSV files
+# Create a list of the tickers for which data was not downloaded
+
+
+
+# Merge the data from all CSV files by the first column which is the date
 listFiles = glob.glob(os.path.join(stockPricesDataLoc, "*.csv"))
 
 tempDf = (pd.read_csv(f) for f in listFiles)
 stocksDf = pd.concat(tempDf, axis = 1)
 
-
-        
-    
-for i in range(create a list with all filenames in the local repository):
-    
-    # Append columns to create a wide dataframe
-    # Match the columns by "Date"
-    # When matching append the stock name to the end of each column, except for "Date"
-    # Remove empty spaces from all columns
-    
-    
-
-    
 
